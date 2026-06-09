@@ -70,8 +70,8 @@ flowchart TD
     D -->|Sim| E["Carregar conversas e contatos para selecao"]
     D -->|Nao| D1["Orientar reconexao ou fallback manual"]
 
-    E --> F["Usuario escolhe contatos e grupos nao supervisionados"]
-    F --> G["Usuario escolhe contatos e grupos prioritarios"]
+    E --> F["Usuario escolhe contatos excluidos e grupos ativados"]
+    F --> G["Usuario escolhe contatos e grupos ativados prioritarios"]
     G --> H["Conectar Agenda"]
 
     H --> I{"Agenda conectada?"}
@@ -144,22 +144,28 @@ O sistema deve evitar processamento por IA antes da escolha de escopo.
 
 Esta e uma etapa central do onboarding.
 
+No MVP, grupos devem ficar desligados por padrao. O usuario pode ativar grupos especificos depois.
+
 O usuario deve escolher:
 
 - contatos que o Co-CEO nao deve supervisionar;
-- grupos que o Co-CEO nao deve supervisionar;
+- grupos que o Co-CEO pode supervisionar explicitamente;
 - conversas pessoais, familiares ou sensiveis;
 - conversas que nao devem entrar em resumo, memoria, classificacao ou briefing.
 
-Esses itens entram em uma denylist.
+Contatos excluidos entram em uma denylist. Grupos nao ativados tambem devem se comportar como excluidos para fins de leitura, resumo, classificacao, vetorizacao e memoria.
 
 Regra de produto:
 
 > Conversas excluidas nao devem ser enviadas para IA, nao devem gerar resumo, nao devem gerar memoria e nao devem aparecer em briefings.
 
-### 5. Selecao de Contatos Prioritarios
+Regra especifica para grupos:
 
-Depois da denylist, o usuario escolhe contatos e grupos importantes.
+> Grupos nao devem ser supervisionados por padrao. Um grupo so entra na leitura inicial se o usuario ativar esse grupo explicitamente.
+
+### 5. Selecao de Contatos e Grupos Prioritarios
+
+Depois da denylist e da ativacao explicita de grupos, o usuario escolhe contatos e grupos importantes.
 
 Exemplos:
 
@@ -197,14 +203,14 @@ Recomendacao para o MVP:
 
 Perguntas fixas recomendadas:
 
-1. Quais conversas ou grupos o Co-CEO nao deve supervisionar?
-2. Quais contatos ou grupos sao prioritarios?
-3. Em quais horarios voce quer receber briefings?
-4. Quais assuntos sempre exigem aprovacao humana?
-5. Que tipo de resposta o Co-CEO pode sugerir, mas nao enviar sozinho?
-6. Qual tom de comunicacao voce prefere?
-7. Que tipo de reuniao merece preparacao automatica?
-8. O que voce quer reduzir primeiro: ruido, esquecimento, follow-up, reunioes despreparadas ou respostas demoradas?
+1. Quais contatos ou conversas individuais o Co-CEO nao deve supervisionar?
+2. Quais grupos voce quer ativar para supervisao? Por padrao, nenhum grupo e ativado.
+3. Quais contatos ou grupos ativados sao prioritarios?
+4. Em quais horarios voce quer receber briefings?
+5. Quais assuntos sempre exigem aprovacao humana?
+6. Que tipo de resposta o Co-CEO pode sugerir, mas nao enviar sozinho?
+7. Qual tom de comunicacao voce prefere?
+8. Que tipo de reuniao merece preparacao automatica e o que voce quer reduzir primeiro?
 
 Essas perguntas criam a configuracao inicial.
 
@@ -212,14 +218,201 @@ Essas perguntas criam a configuracao inicial.
 
 Depois das perguntas fixas e da selecao de escopo, o Agente de Onboarding pode solicitar uma leitura inicial permitida.
 
-Essa leitura deve considerar apenas:
+Essa leitura nao significa que a IA vai ler tudo. Ela deve ser um pipeline limitado, autorizado e orientado a gerar o primeiro valor.
+
+O pipeline recomendado e:
+
+1. Aplicar escopo permitido.
+2. Coletar historico limitado.
+3. Normalizar conversas.
+4. Classificar relevancia.
+5. Cruzar com Agenda e respostas fixas.
+6. Gerar perguntas de calibracao.
+7. Gerar primeiro briefing.
+
+#### 8.1 Aplicar Escopo Permitido
+
+Antes de qualquer processamento por IA, o sistema aplica os filtros definidos pelo usuario.
+
+Deve ignorar:
+
+- contatos excluidos;
+- grupos excluidos;
+- grupos nao ativados;
+- conversas marcadas como pessoais ou sensiveis;
+- mensagens fora da janela inicial;
+- midias ou anexos nao suportados no MVP.
+
+Pode considerar:
 
 - conversas nao excluidas;
 - contatos prioritarios;
+- grupos explicitamente ativados;
 - metadados permitidos;
 - eventos de agenda permitidos;
 - respostas fixas do usuario;
 - politicas de aprovacao do MVP.
+
+Regra forte:
+
+> Conversa excluida nao vai para LLM, nao vira embedding, nao vira resumo e nao vira memoria.
+
+#### 8.2 Coletar Historico Limitado
+
+O MVP nao deve tentar ler todo o historico do empreendedor.
+
+A leitura inicial deve usar janelas curtas e diferentes por tipo de conversa.
+
+Recomendacao inicial:
+
+```txt
+Contatos prioritarios:
+- ultimos 7 a 14 dias
+- ou ate 100 mensagens recentes por conversa
+
+Conversas normais:
+- ultimos 3 a 7 dias
+- ou ate 30 a 50 mensagens recentes por conversa
+
+Grupos ativados:
+- ultimos 1 a 3 dias
+- ou mensagens com mencao, pendencia, decisao ou sinal de relevancia
+```
+
+Esses limites podem ser ajustados depois por custo, qualidade e privacidade.
+
+#### 8.3 Normalizar Conversas
+
+Antes da classificacao por IA, o sistema deve transformar mensagens brutas em uma estrutura padrao.
+
+Campos uteis:
+
+```txt
+conversation_id
+conversation_type: individual | group
+supervision_status: excluded | priority | normal | unknown | needs_review
+participants
+message_id
+message_timestamp
+message_author
+message_direction: sent | received
+message_text
+has_media
+media_type
+is_from_user
+is_group_mention
+```
+
+No MVP, midias complexas podem ser marcadas como nao analisadas.
+
+Exemplo:
+
+```txt
+"midia detectada, nao analisada nesta versao"
+```
+
+#### 8.4 Classificar Relevancia
+
+A primeira classificacao por IA nao deve criar memoria automaticamente.
+
+Ela deve identificar sinais operacionais:
+
+- pendencia;
+- pergunta sem resposta;
+- reuniao mencionada;
+- contato importante;
+- lead quente;
+- promessa feita;
+- prazo;
+- cobranca;
+- conflito;
+- decisao aguardando o empreendedor;
+- conversa ruidosa;
+- necessidade de follow-up;
+- possivel assunto sensivel.
+
+Exemplo de saida estruturada:
+
+```json
+{
+  "conversation_id": "123",
+  "importance": "high",
+  "urgency": "medium",
+  "category": "cliente",
+  "has_pending_decision": true,
+  "has_follow_up": true,
+  "noise_level": "low",
+  "suggested_action": "incluir_no_primeiro_briefing",
+  "memory_candidate": null,
+  "requires_user_confirmation": true
+}
+```
+
+#### 8.5 Cruzar com Agenda e Respostas Fixas
+
+A leitura inicial deve cruzar sinais de WhatsApp com:
+
+- eventos de Agenda permitidos;
+- participantes de reunioes;
+- horarios de briefing escolhidos;
+- contatos prioritarios;
+- assuntos sensiveis;
+- tom preferido;
+- regras de aprovacao.
+
+Exemplo:
+
+```txt
+Agenda mostra reuniao com Joao amanha.
+WhatsApp permitido mostra conversa recente com Joao.
+Usuario marcou Joao como prioritario.
+Resultado: Joao entra no primeiro briefing.
+```
+
+#### 8.6 Gerar Perguntas de Calibracao
+
+Depois da leitura inicial, o Agente de Onboarding pode gerar ate 3 perguntas de calibracao.
+
+Essas perguntas devem:
+
+- reduzir ambiguidade;
+- explicar por que estao sendo feitas;
+- priorizar impacto no primeiro briefing;
+- ser opcionais;
+- nao depender de conversas excluidas.
+
+Exemplos:
+
+```txt
+"Joao aparece como contato frequente e tem reuniao amanha. Ele e cliente, socio, fornecedor ou equipe?"
+
+"Esse grupo teve muitas mensagens, mas poucas decisoes claras. Quer que eu monitore so mencoes e pendencias?"
+
+"Quando houver reuniao comercial, voce quer briefing 1 hora antes?"
+```
+
+#### 8.7 Gerar Primeiro Briefing
+
+O primeiro briefing deve ser curto, claro e corrigivel.
+
+Exemplo de formato:
+
+```txt
+Fiz uma primeira leitura do que voce autorizou.
+
+1. Reuniao com Joao amanha as 10h
+Ultima conversa: ele pediu atualizacao da proposta.
+Possivel decisao: enviar versao final hoje ou alinhar prazo na reuniao.
+
+2. Conversa com Maria
+Ela perguntou sobre disponibilidade e ainda nao teve resposta.
+
+3. Grupo Comercial
+Identifiquei uma pendencia: proposta do cliente X precisa de retorno.
+
+Pergunta de calibracao:
+Quer que eu considere Joao como cliente estrategico?
+```
 
 O objetivo nao e entender a vida inteira do empreendedor. O objetivo e gerar contexto suficiente para o primeiro briefing e para perguntas de calibracao.
 
@@ -297,7 +490,7 @@ Perguntas geradas por IA servem para calibrar o Co-CEO com base no contexto real
 Elas devem surgir apenas depois de:
 
 - WhatsApp conectado;
-- contatos/grupos excluidos definidos;
+- contatos excluidos e grupos ativados definidos;
 - Agenda conectada ou explicitamente pulada;
 - leitura inicial permitida concluida.
 
@@ -418,6 +611,8 @@ unknown       = aguardar mais contexto
 needs_review  = pedir confirmacao ao usuario
 ```
 
+No caso de grupos, o estado padrao no MVP deve ser `excluded` ou `needs_review`, ate que o usuario ative o grupo explicitamente.
+
 O sistema deve permitir revisao posterior.
 
 Exemplos:
@@ -511,7 +706,8 @@ O onboarding e considerado concluido quando:
 
 - conta criada;
 - WhatsApp conectado ou fallback explicitamente aceito;
-- contatos/grupos excluidos revisados ou confirmados como vazios;
+- contatos excluidos revisados ou confirmados como vazios;
+- grupos ativados revisados ou pulados;
 - contatos/grupos prioritarios definidos ou pulados;
 - horarios de briefing definidos;
 - regras basicas de aprovacao definidas;
@@ -541,7 +737,7 @@ Esses pontos podem aparecer depois como expansao, configuracao avancada ou proxi
 ## Decisoes de Produto
 
 - O onboarding deve ser progressivo.
-- A selecao de contatos/grupos nao supervisionados vem antes da primeira leitura por IA.
+- A selecao de contatos excluidos e grupos ativados vem antes da primeira leitura por IA.
 - O usuario deve poder excluir conversas pessoais, familiares ou sensiveis.
 - Perguntas fixas devem ser limitadas a 8 no MVP.
 - Perguntas geradas por IA devem ser limitadas a 3 no onboarding inicial.
@@ -560,4 +756,3 @@ Depois desta subjornada, as proximas etapas devem detalhar:
 - subjornada de preparacao de reuniao;
 - subjornada de sugestao e aprovacao de resposta;
 - subjornada de memoria operacional.
-
