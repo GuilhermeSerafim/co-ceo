@@ -227,8 +227,7 @@ O pipeline recomendado e:
 3. Normalizar conversas.
 4. Classificar relevancia.
 5. Cruzar com Agenda e respostas fixas.
-6. Gerar perguntas de calibracao.
-7. Gerar primeiro briefing.
+6. Preparar insumos para perguntas de calibracao e primeiro briefing.
 
 #### 8.1 Aplicar Escopo Permitido
 
@@ -303,12 +302,13 @@ is_from_user
 is_group_mention
 ```
 
-No MVP, midias complexas podem ser marcadas como nao analisadas.
+No MVP, quando houver audio, imagem, video, PDF ou outro anexo, o sistema registra que existe uma midia, mas nao analisa o conteudo dessa midia nesta versao.
 
 Exemplo:
 
 ```txt
-"midia detectada, nao analisada nesta versao"
+"audio recebido, conteudo nao analisado nesta versao"
+"PDF recebido, conteudo nao analisado nesta versao"
 ```
 
 #### 8.4 Classificar Relevancia
@@ -369,52 +369,24 @@ Usuario marcou Joao como prioritario.
 Resultado: Joao entra no primeiro briefing.
 ```
 
-#### 8.6 Gerar Perguntas de Calibracao
+#### 8.6 Preparar Insumos
 
-Depois da leitura inicial, o Agente de Onboarding pode gerar ate 3 perguntas de calibracao.
+Ao final da leitura inicial, o sistema deve produzir insumos estruturados para as proximas duas etapas: perguntas geradas por IA e primeiro briefing.
 
-Essas perguntas devem:
-
-- reduzir ambiguidade;
-- explicar por que estao sendo feitas;
-- priorizar impacto no primeiro briefing;
-- ser opcionais;
-- nao depender de conversas excluidas.
-
-Exemplos:
+Exemplos de insumos:
 
 ```txt
-"Joao aparece como contato frequente e tem reuniao amanha. Ele e cliente, socio, fornecedor ou equipe?"
-
-"Esse grupo teve muitas mensagens, mas poucas decisoes claras. Quer que eu monitore so mencoes e pendencias?"
-
-"Quando houver reuniao comercial, voce quer briefing 1 hora antes?"
+conversas_relevantes
+pendencias_detectadas
+reunioes_proximas
+contatos_ambiguos
+grupos_ruidosos
+possiveis_memorias_candidatas
+assuntos_sensiveis_detectados
+sugestoes_de_calibracao
 ```
 
-#### 8.7 Gerar Primeiro Briefing
-
-O primeiro briefing deve ser curto, claro e corrigivel.
-
-Exemplo de formato:
-
-```txt
-Fiz uma primeira leitura do que voce autorizou.
-
-1. Reuniao com Joao amanha as 10h
-Ultima conversa: ele pediu atualizacao da proposta.
-Possivel decisao: enviar versao final hoje ou alinhar prazo na reuniao.
-
-2. Conversa com Maria
-Ela perguntou sobre disponibilidade e ainda nao teve resposta.
-
-3. Grupo Comercial
-Identifiquei uma pendencia: proposta do cliente X precisa de retorno.
-
-Pergunta de calibracao:
-Quer que eu considere Joao como cliente estrategico?
-```
-
-O objetivo nao e entender a vida inteira do empreendedor. O objetivo e gerar contexto suficiente para o primeiro briefing e para perguntas de calibracao.
+O objetivo nao e entender a vida inteira do empreendedor. O objetivo e preparar contexto suficiente para que as secoes 9 e 10 gerem, respectivamente, perguntas de calibracao e primeiro briefing.
 
 ### 9. Perguntas Geradas por IA
 
