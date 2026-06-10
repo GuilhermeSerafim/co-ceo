@@ -398,6 +398,18 @@ Recomendacao para o MVP:
 
 Essas perguntas devem ser opcionais e altamente contextuais.
 
+Elas devem:
+
+- reduzir ambiguidade operacional;
+- explicar por que estao sendo feitas;
+- priorizar impacto no primeiro briefing;
+- ser respondiveis rapidamente;
+- nao depender de conversas excluidas;
+- nao transformar inferencia em regra sem validacao;
+- poder virar memoria candidata quando a resposta tiver valor recorrente.
+
+As perguntas devem ser geradas a partir dos insumos preparados na leitura inicial, como contatos ambiguos, grupos ruidosos, reunioes proximas, pendencias detectadas e possiveis memorias candidatas.
+
 Exemplos:
 
 - "Joao aparece com frequencia nas conversas permitidas. Ele e cliente, parceiro, fornecedor ou equipe?"
@@ -407,6 +419,21 @@ Exemplos:
 - "Quando alguem pedir status de entrega, voce prefere resposta objetiva ou mais consultiva?"
 
 As perguntas geradas por IA nao devem ser ilimitadas. Se o sistema tiver muitas duvidas, deve priorizar as que mais impactam o primeiro briefing.
+
+Exemplo de decisao:
+
+```txt
+Insumo:
+- Joao aparece em conversa recente.
+- Joao tambem aparece em reuniao amanha.
+- Usuario ainda nao classificou Joao.
+
+Pergunta gerada:
+"Joao aparece nas suas conversas e em uma reuniao amanha. Ele e cliente, parceiro, fornecedor ou equipe?"
+
+Possivel resultado:
+- Se o usuario responder "cliente estrategico", isso vira memoria candidata ou confirmada, dependendo do fluxo de validacao.
+```
 
 ### 10. Primeiro Briefing
 
@@ -422,6 +449,45 @@ Ele deve mostrar algo como:
 - limites que ainda precisam de confirmacao.
 
 O primeiro briefing nao deve ser longo. Ele precisa ser util, claro e corrigivel.
+
+Formato recomendado:
+
+```txt
+1. O que importa agora
+2. Pendencias percebidas
+3. Reunioes proximas
+4. Decisoes que talvez dependam de voce
+5. Perguntas de calibracao, se houver
+```
+
+Exemplo:
+
+```txt
+Fiz uma primeira leitura do que voce autorizou.
+
+1. Reuniao com Joao amanha as 10h
+Ultima conversa: ele pediu atualizacao da proposta.
+Possivel decisao: enviar versao final hoje ou alinhar prazo na reuniao.
+
+2. Conversa com Maria
+Ela perguntou sobre disponibilidade e ainda nao teve resposta.
+
+3. Grupo Comercial
+Identifiquei uma pendencia: proposta do cliente X precisa de retorno.
+
+Pergunta de calibracao:
+Quer que eu considere Joao como cliente estrategico?
+```
+
+O primeiro briefing deve sinalizar incerteza quando houver inferencia.
+
+Exemplo:
+
+```txt
+"Parece ser uma pendencia comercial, mas ainda preciso da sua confirmacao."
+```
+
+Ele nao deve incluir conversas excluidas, grupos nao ativados, conteudo de midias nao analisadas ou memorias candidatas como se fossem fatos confirmados.
 
 ### 11. Validacao do Usuario
 
