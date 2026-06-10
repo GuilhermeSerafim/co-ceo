@@ -199,20 +199,29 @@ O onboarding deve ter poucas perguntas fixas, agrupadas no painel.
 
 Recomendacao para o MVP:
 
-> 8 perguntas fixas no maximo.
+> ate 5 perguntas fixas obrigatorias antes da leitura inicial.
 
-Perguntas fixas recomendadas:
+Perguntas fixas obrigatorias:
 
 1. Quais contatos ou conversas individuais o Co-CEO nao deve supervisionar?
 2. Quais grupos voce quer ativar para supervisao? Por padrao, nenhum grupo e ativado.
-3. Quais contatos ou grupos ativados sao prioritarios?
-4. Em quais horarios voce quer receber briefings?
-5. Quais assuntos sempre exigem aprovacao humana?
-6. Que tipo de resposta o Co-CEO pode sugerir, mas nao enviar sozinho?
-7. Qual tom de comunicacao voce prefere?
-8. Que tipo de reuniao merece preparacao automatica e o que voce quer reduzir primeiro?
+3. Em quais horarios voce quer receber briefings?
+4. Quais assuntos sempre exigem aprovacao humana?
+5. O que voce quer reduzir primeiro: ruido, esquecimento, follow-up, reunioes despreparadas ou respostas demoradas?
 
-Essas perguntas criam a configuracao inicial.
+Essas perguntas criam a configuracao minima para iniciar a leitura permitida.
+
+Perguntas fixas opcionais ou progressivas:
+
+1. Quais contatos ou grupos ativados sao prioritarios?
+2. Qual tom de comunicacao voce prefere?
+3. Que tipo de reuniao merece preparacao automatica?
+
+Essas perguntas podem aparecer como configuracao recomendada, depois do primeiro briefing ou quando o sistema perceber que a resposta melhoraria a rotina.
+
+Regra de UX:
+
+> O onboarding nao deve parecer uma entrevista longa. Antes do primeiro valor, o usuario responde apenas o essencial. O restante pode ser calibrado depois.
 
 ### 8. Leitura Inicial Permitida
 
@@ -560,17 +569,24 @@ Essa validacao alimenta a memoria operacional.
 
 Perguntas fixas servem para regras essenciais que nao dependem de analise de contexto.
 
-Elas definem:
+Elas podem ser obrigatorias ou opcionais.
+
+As obrigatorias definem:
 
 - permissao;
 - escopo;
 - horarios;
 - assuntos sensiveis;
-- tom;
-- prioridade;
 - objetivo inicial.
 
-Elas devem ser previsiveis, auditaveis e iguais para todos os usuarios do MVP.
+As opcionais ou progressivas podem definir:
+
+- tom;
+- prioridade;
+- tipo de reuniao que merece preparacao automatica;
+- preferencias mais refinadas de briefing.
+
+Elas devem ser previsiveis, auditaveis e iguais para todos os usuarios do MVP. A diferenca e que apenas as obrigatorias bloqueiam a leitura inicial.
 
 ### Perguntas Geradas por IA
 
@@ -828,7 +844,8 @@ Esses pontos podem aparecer depois como expansao, configuracao avancada ou proxi
 - O onboarding deve ser progressivo.
 - A selecao de contatos excluidos e grupos ativados vem antes da primeira leitura por IA.
 - O usuario deve poder excluir conversas pessoais, familiares ou sensiveis.
-- Perguntas fixas devem ser limitadas a 8 no MVP.
+- Perguntas fixas obrigatorias devem ser limitadas a 5 antes da leitura inicial.
+- Perguntas fixas opcionais ou progressivas podem complementar configuracao depois do primeiro valor.
 - Perguntas geradas por IA devem ser limitadas a 3 no onboarding inicial.
 - Perguntas geradas por IA dependem de contexto permitido, nao de acesso irrestrito.
 - O Agente de Onboarding conduz o workflow, mas nao e um funcionario de IA.
