@@ -410,6 +410,57 @@ Elas devem:
 
 As perguntas devem ser geradas a partir dos insumos preparados na leitura inicial, como contatos ambiguos, grupos ruidosos, reunioes proximas, pendencias detectadas e possiveis memorias candidatas.
 
+#### Heuristica de Geracao
+
+No MVP, o Co-CEO pode usar uma pontuacao simples de ambiguidade e relevancia para decidir se deve gerar perguntas opcionais.
+
+Essa pontuacao nao deve ser tratada como algoritmo definitivo. Ela e uma heuristica inicial de produto para evitar perguntas demais e priorizar apenas o que melhora o primeiro briefing ou a rotina.
+
+Regra recomendada:
+
+```txt
+Se score >= 5:
+- pode gerar pergunta opcional
+
+Se houver mais de 3 perguntas possiveis:
+- priorizar as 3 com maior impacto no primeiro briefing
+
+Se score < 5:
+- nao gerar pergunta no onboarding inicial
+- seguir para o primeiro briefing
+```
+
+Exemplo de pesos iniciais:
+
+```txt
+Contato aparece com frequencia: +2
+Contato esta em reuniao proxima: +3
+Contato nao tem categoria: +2
+Contato e prioritario ou parece prioritario: +2
+Ha pendencia detectada: +3
+Classificacao com confianca baixa ou media: +2
+Conversa vem de grupo ruidoso ativado: +1
+Possivel assunto sensivel: +3
+Resposta melhoraria o primeiro briefing: +3
+```
+
+Exemplo:
+
+```txt
+Joao aparece em muitas mensagens: +2
+Joao esta em reuniao amanha: +3
+Joao nao tem categoria: +2
+
+Score total: 7
+
+Pergunta opcional:
+"Joao e cliente, parceiro, fornecedor ou equipe?"
+```
+
+Importante:
+
+> Opcional significa que o usuario pode responder, pular ou deixar para depois. Condicional significa que o sistema so gera pergunta quando encontra ambiguidade relevante.
+
 Exemplos:
 
 - "Joao aparece com frequencia nas conversas permitidas. Ele e cliente, parceiro, fornecedor ou equipe?"
