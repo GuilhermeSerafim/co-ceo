@@ -78,7 +78,7 @@ flowchart TD
     I -->|Sim| J["Validar acesso a eventos"]
     I -->|Nao| I1["Seguir com WhatsApp apenas"]
 
-    J --> K["Perguntas fixas de configuracao"]
+    J --> K["Configuracao minima obrigatoria"]
     I1 --> K
     D1 --> K
 
@@ -193,21 +193,31 @@ No MVP, a Agenda e apoio contextual. Ela serve para:
 
 Se a Agenda nao conectar, o onboarding pode continuar, mas o usuario deve saber que a preparacao de reuniao sera limitada.
 
-### 7. Perguntas Fixas
+### 7. Configuracao Minima Obrigatoria
 
-O onboarding deve ter poucas perguntas fixas, agrupadas no painel.
+Antes da leitura inicial, o usuario precisa concluir uma configuracao minima.
+
+Essa configuracao mistura duas coisas diferentes:
+
+- configuracao de escopo, feita por selecao na interface;
+- perguntas fixas obrigatorias, respondidas como formulario curto.
+
+A selecao de contatos excluidos e grupos ativados nao deve ser tratada como pergunta fixa, porque ja acontece nas etapas de escopo.
 
 Recomendacao para o MVP:
 
-> ate 5 perguntas fixas obrigatorias antes da leitura inicial.
+> 2 configuracoes obrigatorias de escopo + ate 3 perguntas fixas obrigatorias antes da leitura inicial.
+
+Configuracoes obrigatorias de escopo:
+
+1. Revisar contatos ou conversas individuais que o Co-CEO nao deve supervisionar.
+2. Ativar explicitamente os grupos que o Co-CEO pode supervisionar. Por padrao, nenhum grupo e ativado.
 
 Perguntas fixas obrigatorias:
 
-1. Quais contatos ou conversas individuais o Co-CEO nao deve supervisionar?
-2. Quais grupos voce quer ativar para supervisao? Por padrao, nenhum grupo e ativado.
-3. Em quais horarios voce quer receber briefings?
-4. Quais assuntos sempre exigem aprovacao humana?
-5. O que voce quer reduzir primeiro: ruido, esquecimento, follow-up, reunioes despreparadas ou respostas demoradas?
+1. Em quais horarios voce quer receber briefings?
+2. Quais assuntos sempre exigem aprovacao humana?
+3. O que voce quer reduzir primeiro: ruido, esquecimento, follow-up, reunioes despreparadas ou respostas demoradas?
 
 Essas perguntas criam a configuracao minima para iniciar a leitura permitida.
 
@@ -225,7 +235,7 @@ Regra de UX:
 
 ### 8. Leitura Inicial Permitida
 
-Depois das perguntas fixas e da selecao de escopo, o Agente de Onboarding pode solicitar uma leitura inicial permitida.
+Depois da configuracao minima obrigatoria, o Agente de Onboarding pode solicitar uma leitura inicial permitida.
 
 Essa leitura nao significa que a IA vai ler tudo. Ela deve ser um pipeline limitado, autorizado e orientado a gerar o primeiro valor.
 
@@ -563,18 +573,31 @@ O usuario pode:
 
 Essa validacao alimenta a memoria operacional.
 
-## Perguntas Fixas vs Perguntas Geradas por IA
+## Configuracao de Escopo, Perguntas Fixas e Perguntas Geradas por IA
+
+### Configuracao de Escopo
+
+A configuracao de escopo define o que o Co-CEO pode ou nao observar.
+
+Ela deve ser feita por interface estruturada de selecao, nao apenas por pergunta em texto.
+
+Ela define:
+
+- contatos excluidos;
+- conversas individuais excluidas;
+- grupos ativados;
+- grupos desativados por padrao.
+
+Essa etapa bloqueia a leitura inicial. Sem escopo confirmado, o sistema nao deve enviar conversas para IA.
 
 ### Perguntas Fixas
 
-Perguntas fixas servem para regras essenciais que nao dependem de analise de contexto.
+Perguntas fixas servem para regras essenciais que nao dependem de analise de contexto e nao exigem lista de contatos.
 
 Elas podem ser obrigatorias ou opcionais.
 
 As obrigatorias definem:
 
-- permissao;
-- escopo;
 - horarios;
 - assuntos sensiveis;
 - objetivo inicial.
@@ -586,7 +609,7 @@ As opcionais ou progressivas podem definir:
 - tipo de reuniao que merece preparacao automatica;
 - preferencias mais refinadas de briefing.
 
-Elas devem ser previsiveis, auditaveis e iguais para todos os usuarios do MVP. A diferenca e que apenas as obrigatorias bloqueiam a leitura inicial.
+Elas devem ser previsiveis, auditaveis e iguais para todos os usuarios do MVP. A diferenca e que apenas as obrigatorias bloqueiam a leitura inicial junto com a configuracao de escopo.
 
 ### Perguntas Geradas por IA
 
@@ -844,7 +867,8 @@ Esses pontos podem aparecer depois como expansao, configuracao avancada ou proxi
 - O onboarding deve ser progressivo.
 - A selecao de contatos excluidos e grupos ativados vem antes da primeira leitura por IA.
 - O usuario deve poder excluir conversas pessoais, familiares ou sensiveis.
-- Perguntas fixas obrigatorias devem ser limitadas a 5 antes da leitura inicial.
+- Antes da leitura inicial, o usuario deve concluir 2 configuracoes obrigatorias de escopo: contatos excluidos e grupos ativados.
+- Perguntas fixas obrigatorias devem ser limitadas a 3 antes da leitura inicial.
 - Perguntas fixas opcionais ou progressivas podem complementar configuracao depois do primeiro valor.
 - Perguntas geradas por IA devem ser limitadas a 3 no onboarding inicial.
 - Perguntas geradas por IA dependem de contexto permitido, nao de acesso irrestrito.
